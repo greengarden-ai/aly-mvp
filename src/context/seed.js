@@ -29,11 +29,11 @@ export const initialState = {
 
   // ── Jobs ─────────────────────────────────────────────────
   jobs: [
-    { id: 'JOB-001', customerId: 'CUST-A', region: 'STX', wellName: 'PBR Well A-1',      status: JOB_STATUSES.ACTIVE, createdAt: '2026-06-15T08:00:00Z', createdBy: 'u-005', notes: 'Standard rig move. No known complications.' },
-    { id: 'JOB-002', customerId: 'CUST-B', region: 'STX', wellName: 'GCU Well B-3',      status: JOB_STATUSES.ACTIVE, createdAt: '2026-06-20T09:30:00Z', createdBy: 'u-005', notes: 'Rental equipment carried over from prior job. Verify closure.' },
-    { id: 'JOB-003', customerId: 'CUST-C', region: 'WTX', wellName: 'LSE Well C-7',      status: JOB_STATUSES.ACTIVE, createdAt: '2026-07-01T07:00:00Z', createdBy: 'u-006', notes: '' },
-    { id: 'JOB-004', customerId: 'CUST-D', region: 'WTX', wellName: 'DRO Well D-2',      status: JOB_STATUSES.ACTIVE, createdAt: '2026-07-05T10:00:00Z', createdBy: 'u-006', notes: 'Equipment relocated with rig. Flagged for review.' },
-    { id: 'JOB-005', customerId: 'CUST-E', region: 'STX', wellName: 'Maverick Well E-1', status: JOB_STATUSES.ACTIVE, createdAt: '2026-07-10T08:00:00Z', createdBy: 'u-013', notes: 'New customer. Baseline job, no issues anticipated.' },
+    { id: 'JOB-001', jobNumber: '2816', customerId: 'CUST-A', region: 'STX', wellName: 'PBR Well A-1',      lease: 'PBR Well A-1 Pad',        rig: 'Cactus 140',    status: JOB_STATUSES.ACTIVE, createdAt: '2026-06-15T08:00:00Z', createdBy: 'u-005', notes: 'Standard rig move. No known complications.' },
+    { id: 'JOB-002', jobNumber: '2840', customerId: 'CUST-B', region: 'STX', wellName: 'GCU Well B-3',      lease: 'GCU Well B-3 Location',   rig: 'H&P 537',       status: JOB_STATUSES.ACTIVE, createdAt: '2026-06-20T09:30:00Z', createdBy: 'u-005', notes: 'Rental equipment carried over from prior job. Verify closure.' },
+    { id: 'JOB-003', jobNumber: '2807', customerId: 'CUST-C', region: 'WTX', wellName: 'LSE Well C-7',      lease: 'LSE Well C-7 Pad',         rig: 'H&P 430',       status: JOB_STATUSES.ACTIVE, createdAt: '2026-07-01T07:00:00Z', createdBy: 'u-006', notes: '' },
+    { id: 'JOB-004', jobNumber: '2810', customerId: 'CUST-D', region: 'WTX', wellName: 'DRO Well D-2',      lease: 'DRO Well D-2 Site',        rig: 'Ensign 103',    status: JOB_STATUSES.ACTIVE, createdAt: '2026-07-05T10:00:00Z', createdBy: 'u-006', notes: 'Equipment relocated with rig. Flagged for review.' },
+    { id: 'JOB-005', jobNumber: '2855', customerId: 'CUST-E', region: 'STX', wellName: 'Maverick Well E-1', lease: 'Maverick Well E-1 Pad',    rig: 'Patterson 219', status: JOB_STATUSES.ACTIVE, createdAt: '2026-07-10T08:00:00Z', createdBy: 'u-013', notes: 'New customer. Baseline job, no issues anticipated.' },
   ],
 
   // ── Field Tickets ─────────────────────────────────────────

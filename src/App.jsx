@@ -7,6 +7,7 @@ import LoginScreen from './screens/LoginScreen.jsx'
 import OrderIntakeScreen from './screens/cs/OrderIntakeScreen.jsx'
 import RigMoveTicketScreen from './screens/fieldworker/RigMoveTicketScreen.jsx'
 import RentalTicketScreen from './screens/fieldworker/RentalTicketScreen.jsx'
+import FieldTicketScreen from './screens/fieldworker/FieldTicketScreen.jsx'
 import TicketAssemblyScreen from './screens/biller/TicketAssemblyScreen.jsx'
 import ApprovalRoutingScreen from './screens/approver/ApprovalRoutingScreen.jsx'
 import CFOApprovalScreen from './screens/alya/CFOApprovalScreen.jsx'
@@ -33,6 +34,7 @@ export default function App() {
             }
           >
             <Route path="/cs/intake"                   element={<OrderIntakeScreen />} />
+            <Route path="/fieldworker/field-ticket"    element={<FieldTicketScreen />} />
             <Route path="/fieldworker/rig-move"        element={<RigMoveTicketScreen />} />
             <Route path="/fieldworker/rental"          element={<RentalTicketScreen />} />
             <Route path="/biller/tickets"              element={<TicketAssemblyScreen />} />

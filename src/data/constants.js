@@ -35,8 +35,9 @@ export const ROLE_DEFAULT_ROUTES = {
 }
 
 export const TICKET_TYPES = {
-  RIG_MOVE: 'RIG_MOVE',
-  RENTAL:   'RENTAL',
+  RIG_MOVE:     'RIG_MOVE',
+  RENTAL:       'RENTAL',
+  FIELD_TICKET: 'FIELD_TICKET',
 }
 
 export const TICKET_STATUSES = {
