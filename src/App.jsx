@@ -15,16 +15,8 @@ import InvoiceScreen from './screens/shared/InvoiceScreen.jsx'
 import ExceptionQueueScreen from './screens/alya/ExceptionQueueScreen.jsx'
 import FleetScreen from './screens/alya/FleetScreen.jsx'
 import DashboardScreen from './screens/alya/DashboardScreen.jsx'
-
-// Stage 4 screens — stubs until Stage 4 build
-function ComingSoon({ name }) {
-  return (
-    <div style={{ padding: 'var(--space-6)' }}>
-      <h2 style={{ color: 'var(--navy)', marginBottom: 'var(--space-3)' }}>{name}</h2>
-      <p style={{ color: 'var(--text-muted)' }}>Coming in Stage 4.</p>
-    </div>
-  )
-}
+import SuperAdminScreen from './screens/alya/SuperAdminScreen.jsx'
+import HelpScreen from './screens/alya/HelpScreen.jsx'
 
 export default function App() {
   return (
@@ -53,9 +45,8 @@ export default function App() {
             <Route path="/alya/fleet"      element={<FleetScreen />} />
             <Route path="/alya/dashboard"  element={<DashboardScreen />} />
 
-            {/* Stage 4 */}
-            <Route path="/alya/admin" element={<ComingSoon name="Super Admin" />} />
-            <Route path="/alya/help"  element={<ComingSoon name="Help & Guide" />} />
+            <Route path="/alya/admin" element={<SuperAdminScreen />} />
+            <Route path="/alya/help"  element={<HelpScreen />} />
           </Route>
 
           <Route path="/" element={<Navigate to="/login" replace />} />
