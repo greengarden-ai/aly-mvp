@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<script type="application/json" id="cowork-artifact-meta">
+{
+  "name": "Aly Field Ticket Prototype",
+  "schemaVersion": 1,
+  "description": "Interactive prototype of the Field Ticket form replacing Novarra/KPA — Job Number lookup, Crew (Aly/3rd party), Rig-Up/Rig-Down with a 15-item equipment repeater (DMP/RBFOW/FB/EMMP ownership+serial, Containment type+size, Other), Visit Details (times, standby, vehicle/mileage), and Manager Approval. Includes a live JSON data preview and a running list of open assumptions for the AI specialist. Trucking Ticket, Service Ticket, and Mud Transfer are placeholders pending future outlines.",
+  "mcpTools": [],
+  "mcpServerNames": []
+}
+</script>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aly Energy Services — Field Ticket (Prototype)</title>
+<style>
+  :root{
+    --navy:#1b2a3d;
+    --navy-2:#26384f;
+    --accent:#c4791f;
+    --accent-2:#a8631a;
+    --bg:#f4f5f7;
+    --card:#ffffff;
+    --border:#dbdfe6;
+    --text:#1f2530;
+    --text-dim:#5b6472;
+    --green:#2e7d4f;
+    --red:#b23b3b;
+    --note-bg:#fff6e8;
+    --note-border:#e8c789;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    padding-bottom:80px;
+  }
+  header.top{
+    background:var(--navy);
+    color:#fff;
+    padding:18px 20px 16px;
+    position:sticky;
+    top:0;
+    z-index:50;
+    box-shadow:0 2px 8px rgba(0,0,0,.15);
+  }
+  header.top .brand{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:6px;
+  }
+  header.top h1{
+    margin:0;
+    font-size:20px;
+    letter-spacing:.2px;
+  }
+  header.top .badge{
+    background:var(--accent);
+    color:#1b2a3d;
+    font-weight:700;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:.6px;
+    padding:4px 9px;
+    border-radius:20px;
+  }
+  header.top .sub{
+    font-size:12.5px;
+    color:#b8c2d1;
+    margin-top:4px;
+  }
+  main{
+    max-width:760px;
+    margin:0 auto;
+    padding:18px 14px 10px;
+  }
+  .card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:16px 16px 18px;
+    margin-bottom:16px;
+  }
+  .card.disabled{
+    opacity:.55;
+    pointer-events:none;
+    background:repeating-linear-gradient(135deg,#fff,#fff 10px,#fafafa 10px,#fafafa 20px);
+  }
+  .section-title{
+    font-size:13px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:.6px;
+    color:var(--navy-2);
+    margin:0 0 12px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .section-title .num{
+    background:var(--navy);
+    color:#fff;
+    width:20px;height:20px;
+    border-radius:50%;
+    font-size:11px;
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+  }
+  label{
+    display:block;
+    font-size:13px;
+    font-weight:600;
+    margin:12px 0 5px;
+    color:var(--text);
+  }
+  label.first{margin-top:0;}
+  select, input[type=text], input[type=number], input[type=datetime-local], textarea{
+    width:100%;
+    padding:11px 12px;
+    border:1px solid var(--border);
+    border-radius:8px;
+    font-size:15px;
+    background:#fff;
+    color:var(--text);
+    font-family:inherit;
+  }
+  input[list]{
+    background-image:linear-gradient(45deg, transparent 50%, var(--text-dim) 50%), linear-gradient(135deg, var(--text-dim) 50%, transparent 50%);
+    background-position: calc(100% - 18px) calc(1em + 2px), calc(100% - 13px) calc(1em + 2px);
+    background-size: 5px 5px, 5px 5px;
+    background-repeat:no-repeat;
+  }
+  textarea{resize:vertical;min-height:60px;}
+  select:focus, input:focus, textarea:focus{
+    outline:none;
+    border-color:var(--accent);
+    box-shadow:0 0 0 3px rgba(196,121,31,.15);
+  }
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+  @media (max-width:480px){
+    .row2, .row3{grid-template-columns:1fr;}
+  }
+  .segmented{
+    display:flex;
+    border:1px solid var(--border);
+    border-radius:8px;
+    overflow:hidden;
+  }
+  .segmented button{
+    flex:1;
+    padding:11px 8px;
+    background:#fff;
+    border:none;
+    border-right:1px solid var(--border);
+    font-size:13.5px;
+    font-weight:600;
+    color:var(--text-dim);
+    cursor:pointer;
+  }
+  .segmented button:last-child{border-right:none;}
+  .segmented button.active{
+    background:var(--navy);
+    color:#fff;
+  }
+  .segmented button.soon{
+    color:#aab1bc;
+    background:#f2f3f5;
+    cursor:not-allowed;
+  }
+  .segmented button.soon.active{background:#f2f3f5;color:#aab1bc;}
+  .tiny{font-size:11px;color:var(--text-dim);margin-top:4px;}
+  .readonly-box{
+    background:#f6f7f9;
+    border:1px dashed var(--border);
+    border-radius:8px;
+    padding:10px 12px;
+    font-size:13.5px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px 16px;
+    margin-top:10px;
+  }
+  .readonly-box .field{display:flex;flex-direction:column;}
+  .readonly-box .k{font-size:10.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--text-dim);font-weight:700;}
+  .readonly-box .v{font-size:14px;font-weight:600;color:var(--navy-2);}
+  .hidden{display:none !important;}
+  .note{
+    background:var(--note-bg);
+    border:1px solid var(--note-border);
+    border-radius:7px;
+    padding:8px 10px;
+    font-size:12px;
+    color:#7a5a1a;
+    margin-top:6px;
+    display:flex;
+    gap:6px;
+  }
+  .note b{white-space:nowrap;}
+  .equip-list{display:flex;flex-direction:column;gap:12px;}
+  .equip-card{
+    border:1px solid var(--border);
+    border-radius:9px;
+    padding:12px 12px 14px;
+    background:#fbfbfc;
+    position:relative;
+  }
+  .equip-card .equip-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:6px;
+  }
+  .equip-card .equip-head .tag{
+    font-size:11.5px;
+    font-weight:700;
+    color:var(--navy-2);
+    background:#e7ecf3;
+    padding:3px 9px;
+    border-radius:20px;
+  }
+  .equip-card .remove-btn{
+    background:none;
+    border:none;
+    color:var(--red);
+    font-size:12px;
+    font-weight:700;
+    cursor:pointer;
+    padding:4px 6px;
+  }
+  .add-equip-btn{
+    width:100%;
+    padding:12px;
+    border:2px dashed var(--accent);
+    background:#fffaf3;
+    color:var(--accent-2);
+    font-weight:700;
+    font-size:14px;
+    border-radius:9px;
+    cursor:pointer;
+    margin-top:12px;
+  }
+  .add-equip-btn:disabled{
+    opacity:.4;
+    cursor:not-allowed;
+  }
+  .equip-count{
+    text-align:right;
+    font-size:11.5px;
+    color:var(--text-dim);
+    margin-top:6px;
+  }
+  .radio-yn{display:flex;gap:10px;}
+  .radio-yn label.pill{
+    flex:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:10px;
+    font-size:13.5px;
+    font-weight:600;
+    color:var(--text-dim);
+    margin:0;
+    cursor:pointer;
+  }
+  .radio-yn input{accent-color:var(--accent);width:15px;height:15px;}
+  .radio-yn label.pill.checked{
+    border-color:var(--accent);
+    background:#fff6e8;
+    color:var(--accent-2);
+  }
+  footer.actions{
+    position:fixed;
+    bottom:0;left:0;right:0;
+    background:#fff;
+    border-top:1px solid var(--border);
+    padding:12px 14px;
+    display:flex;
+    gap:10px;
+    justify-content:center;
+    z-index:60;
+    box-shadow:0 -2px 10px rgba(0,0,0,.06);
+  }
+  footer.actions .wrap{
+    max-width:760px;
+    width:100%;
+    display:flex;
+    gap:10px;
+  }
+  footer.actions button{
+    padding:13px 16px;
+    border-radius:8px;
+    font-size:14.5px;
+    font-weight:700;
+    cursor:pointer;
+    border:none;
+    flex:1;
+  }
+  #btn-json{background:#eceef2;color:var(--navy-2);border:1px solid var(--border);flex:none;width:auto;padding:13px 18px;}
+  #btn-submit{background:var(--accent);color:#1b2a3d;}
+  #json-panel{
+    position:fixed;
+    inset:0;
+    background:rgba(20,25,35,.55);
+    display:none;
+    align-items:flex-end;
+    justify-content:center;
+    z-index:100;
+  }
+  #json-panel.open{display:flex;}
+  #json-panel .sheet{
+    background:#0f1720;
+    color:#c9e6c2;
+    width:100%;
+    max-width:760px;
+    max-height:78vh;
+    overflow:auto;
+    border-radius:14px 14px 0 0;
+    padding:16px;
+  }
+  #json-panel .sheet h3{
+    color:#fff;
+    margin:0 0 4px;
+    font-size:14px;
+  }
+  #json-panel .sheet .close-x{
+    float:right;
+    background:none;
+    border:none;
+    color:#9aa7b5;
+    font-size:20px;
+    cursor:pointer;
+  }
+  #json-panel pre{
+    font-size:11.5px;
+    line-height:1.5;
+    white-space:pre-wrap;
+    word-break:break-word;
+    margin-top:10px;
+  }
+  .assumptions{
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:16px;
+    margin-top:6px;
+  }
+  .assumptions h2{font-size:14px;margin:0 0 10px;color:var(--navy-2);}
+  .assumptions ol{margin:0;padding-left:18px;font-size:13px;line-height:1.7;color:var(--text);}
+  .assumptions li b{color:var(--navy-2);}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand">
+    <h1>Aly Energy Services — Field Ticket</h1>
+    <span class="badge">Prototype v0.2</span>
+  </div>
+  <div class="sub">Replaces Novarra Flex / KPA capture · Not yet connected to live data</div>
+</header>
+
+<main>
+
+  <!-- TICKET TYPE -->
+  <div class="card">
+    <div class="section-title"><span class="num">1</span>Ticket Type</div>
+    <div class="segmented" id="ticketTypeSeg">
+      <button type="button" class="active" data-val="field">Field Ticket</button>
+      <button type="button" class="soon" data-val="trucking" disabled>Trucking Ticket</button>
+      <button type="button" class="soon" data-val="service" disabled>Service Ticket</button>
+    </div>
+    <div class="note"><b>Note:</b> Trucking Ticket and Service Ticket flows aren't outlined yet — placeholders shown so the full ticket-type switch is visible. Content below is the Field Ticket flow only.</div>
+  </div>
+
+  <!-- JOB NUMBER -->
+  <div class="card">
+    <div class="section-title"><span class="num">2</span>Job Number</div>
+    <label class="first">Job Number</label>
+    <input type="text" id="jobNumber" list="jobNumberList" placeholder="Type to search or enter a job number...">
+    <datalist id="jobNumberList">
+      <option value="2816">
+      <option value="2840">
+      <option value="2807">
+      <option value="2810">
+    </datalist>
+    <div class="readonly-box">
+      <div class="field"><span class="k">Customer</span><span class="v" id="outCustomer">—</span></div>
+      <div class="field"><span class="k">Lease</span><span class="v" id="outLease">—</span></div>
+      <div class="field"><span class="k">Rig</span><span class="v" id="outRig">—</span></div>
+    </div>
+    <div class="note"><b>Note:</b> Type-to-filter list of sample jobs, but any job number can be typed in free-form. Auto-populate only fires for the 4 sample jobs — production version pulls live from the Job master.</div>
+  </div>
+
+  <!-- CREW -->
+  <div class="card">
+    <div class="section-title"><span class="num">3</span>Crew</div>
+    <label class="first">Crew Source</label>
+    <div class="segmented" id="crewSourceSeg">
+      <button type="button" class="active" data-val="aly">Aly Employees</button>
+      <button type="button" data-val="3rd">3rd Party</button>
+    </div>
+
+    <div id="crewAlyWrap">
+      <label>Employee</label>
+      <input type="text" id="crewAly" list="employeeList" placeholder="Type to search or enter a name...">
+      <datalist id="employeeList">
+        <option value="Jaime Salinas">
+        <option value="Hector Ramirez">
+        <option value="Jesus Torres">
+        <option value="Adam Fernandez">
+        <option value="Mike Delgado">
+        <option value="Chris Boone">
+        <option value="Ray Gutierrez">
+        <option value="Danny Ortiz">
+      </datalist>
+    </div>
+
+    <div id="crew3rdWrap" class="hidden">
+      <label>3rd Party Company</label>
+      <input type="text" id="crew3rd" list="vendorList" placeholder="Type to search or enter a company...">
+      <datalist id="vendorList">
+        <option value="Livewire">
+        <option value="Action Roustabout">
+        <option value="MLS Welding">
+      </datalist>
+    </div>
+    <div class="note"><b>Note:</b> Type-to-filter lists with sample names/companies; any name not on the list can still be typed in free-form. Production version pulls from the employee roster and approved-vendor list.</div>
+  </div>
+
+  <!-- WORK TYPE -->
+  <div class="card">
+    <div class="section-title"><span class="num">4</span>Work Type</div>
+    <div class="segmented" id="workTypeSeg">
+      <button type="button" class="active" data-val="rigup">Rig-Up</button>
+      <button type="button" data-val="rigdown">Rig-Down</button>
+      <button type="button" class="soon" data-val="mud" disabled>Mud Transfer</button>
+    </div>
+    <div class="note"><b>Note:</b> Mud Transfer isn't defined yet — placeholder only, per your call to hold it for a later pass.</div>
+  </div>
+
+  <!-- EQUIPMENT -->
+  <div class="card">
+    <div class="section-title"><span class="num">5</span>Equipment</div>
+    <div class="equip-list" id="equipList"></div>
+    <button type="button" class="add-equip-btn" id="addEquipBtn">+ Add Equipment</button>
+    <div class="equip-count"><span id="equipCount">0</span> added — no cap</div>
+    <div class="note"><b>Note:</b> Add as many pieces of equipment as the visit needs, no limit. Type fields below are type-to-filter with free-form entry allowed; owned-serial lists are a small sample — production version pulls live from the Equipment Inventory master (849 assets).</div>
+  </div>
+
+  <!-- VISIT DETAILS -->
+  <div class="card">
+    <div class="section-title"><span class="num">6</span>Visit Details</div>
+
+    <label class="first">Description of Work Performed</label>
+    <textarea id="workDesc" placeholder="e.g. Rigged up (7) RBFOW tanks, containment, and DMP-5 pump on new location..."></textarea>
+
+    <div class="row2">
+      <div>
+        <label>Left Yard</label>
+        <input type="datetime-local" id="tLeftYard">
+      </div>
+      <div>
+        <label>Arrived at Location</label>
+        <input type="datetime-local" id="tArriveLoc">
+      </div>
+    </div>
+    <div class="row2">
+      <div>
+        <label>Left Location</label>
+        <input type="datetime-local" id="tLeftLoc">
+      </div>
+      <div>
+        <label>Returned to Yard</label>
+        <input type="datetime-local" id="tReturnYard">
+      </div>
+    </div>
+
+    <label>Standby Time?</label>
+    <div class="radio-yn" id="standbySeg">
+      <label class="pill checked"><input type="radio" name="standby" value="no" checked> No</label>
+      <label class="pill"><input type="radio" name="standby" value="yes"> Yes</label>
+    </div>
+    <div id="standbyDates" class="hidden">
+      <div class="equip-list" id="standbyList"></div>
+      <button type="button" class="add-equip-btn" id="addStandbyBtn">+ Add Standby Window</button>
+      <div class="note"><b>Note:</b> Add as many standby windows as the visit needs — same repeater pattern as Equipment.</div>
+    </div>
+
+    <div class="row3">
+      <div>
+        <label>Vehicle Number</label>
+        <input type="text" id="vehicleNum" list="vehicleList" placeholder="Type to search or enter a vehicle #...">
+        <datalist id="vehicleList">
+          <option value="AES-101">
+          <option value="AES-107">
+          <option value="AES-114">
+          <option value="AES-122">
+          <option value="AES-133">
+        </datalist>
+      </div>
+      <div>
+        <label>Beginning Mileage</label>
+        <input type="number" id="mileageStart" placeholder="0">
+      </div>
+      <div>
+        <label>Ending Mileage</label>
+        <input type="number" id="mileageEnd" placeholder="0">
+      </div>
+    </div>
+    <div class="note"><b>Note:</b> Vehicle Number is now a type-to-filter dropdown against a sample Aly fleet list; production version pulls live from the fleet vehicle list.</div>
+  </div>
+
+  <!-- MANAGER APPROVAL -->
+  <div class="card">
+    <div class="section-title"><span class="num">7</span>Manager Approval</div>
+
+    <label class="first">Charge?</label>
+    <div class="radio-yn" id="chargeSeg">
+      <label class="pill checked"><input type="radio" name="charge" value="yes" checked> Yes</label>
+      <label class="pill"><input type="radio" name="charge" value="no"> No</label>
+    </div>
+
+    <label>Notes</label>
+    <textarea id="approvalNotes" placeholder="Manager notes..."></textarea>
+
+    <label>Approved?</label>
+    <div class="radio-yn" id="approvedSeg">
+      <label class="pill checked"><input type="radio" name="approved" value="yes" checked> Yes</label>
+      <label class="pill"><input type="radio" name="approved" value="no"> No</label>
+    </div>
+
+    <label>Approving Manager</label>
+    <input type="text" id="approvingManager" list="managerList" placeholder="Type to search or enter a manager...">
+    <datalist id="managerList">
+      <option value="Jaime Salinas">
+      <option value="Hector Ramirez">
+      <option value="Jesus Torres">
+      <option value="Adam Fernandez">
+    </datalist>
+  </div>
+
+  <div class="assumptions">
+    <h2>Open questions / assumptions for the build team</h2>
+    <ol>
+      <li><b>Trucking Ticket &amp; Service Ticket</b> — not yet outlined; this prototype only builds out Field Ticket.</li>
+      <li><b>Mud Transfer</b> — shown as a disabled placeholder under Work Type; fields to be defined later.</li>
+      <li><b>All type-to-filter fields</b> (Job Number, Employee, 3rd Party Company, Equipment Type, Owned Serial, Containment Type, Vehicle Number, Approving Manager) use a native combobox pattern: the list filters as you type, but any value typed that isn't on the list is still accepted as free-form entry. Built with HTML's input+datalist here for speed — production version should use a proper searchable-combobox component with the same filter+free-entry behavior.</li>
+      <li><b>Job Number lookup</b> — sample list of 4 jobs with hardcoded Customer/Lease/Rig; production needs a live Job master lookup.</li>
+      <li><b>Employee &amp; 3rd-party vendor lists</b> — sample data; production needs a live roster / approved-vendor source.</li>
+      <li><b>Equipment serial lists</b> (Aly-owned DMP/RBFOW/FB/EMMP) — small sample set; production needs the live Equipment Inventory master (849 assets), and Sub-Rented entries need to write new vendor/serial combos back into that inventory rather than just being a free lookup.</li>
+      <li><b>Equipment Type free-form entry</b> — if a typed value doesn't match one of the 6 known types (DMP/RBFOW/FB/EMMP/Containment/Other), the form falls back to the "Other" field set (ownership + description) so nothing is lost. Worth confirming this is the right fallback.</li>
+      <li><b>Visit-level fields</b> (description, 4 times, standby, vehicle, mileage) — confirmed as ONE set per ticket covering the whole visit, not repeated per equipment piece.</li>
+      <li><b>Standby windows</b> — now an uncapped repeater (add as many as needed), matching the Equipment pattern.</li>
+      <li><b>Equipment</b> — uncapped repeater; add as many pieces as the visit needs.</li>
+    </ol>
+  </div>
+
+</main>
+
+<footer class="actions">
+  <div class="wrap">
+    <button type="button" id="btn-json">View Data</button>
+    <button type="button" id="btn-submit">Submit Ticket (prototype)</button>
+  </div>
+</footer>
+
+<div id="json-panel">
+  <div class="sheet">
+    <button class="close-x" id="closeJson">×</button>
+    <h3>Live form data (this is the shape a real backend would receive)</h3>
+    <pre id="jsonOut"></pre>
+  </div>
+</div>
+
+<!-- global datalists reused across dynamically-added equipment cards -->
+<datalist id="equipTypeList">
+  <option value="DMP">
+  <option value="RBFOW">
+  <option value="FB">
+  <option value="EMMP">
+  <option value="Containment">
+  <option value="Other">
+</datalist>
+<datalist id="containmentTypeList">
+  <option value="Single">
+  <option value="Double">
+  <option value="Triple">
+  <option value="Diesel">
+  <option value="Chemical">
+</datalist>
+<datalist id="serialListDMP">
+  <option value="DMP-5">
+  <option value="DMP-7">
+  <option value="DMP-13">
+</datalist>
+<datalist id="serialListRBFOW">
+  <option value="RBFOW-11">
+  <option value="RBFOW-63">
+  <option value="RBFOW-22">
+</datalist>
+<datalist id="serialListFB">
+  <option value="FB-928">
+  <option value="FB-2402">
+  <option value="FB-2572">
+</datalist>
+<datalist id="serialListEMMP">
+  <option value="EMMP-4">
+  <option value="EMMP-9">
+</datalist>
+
+<script>
+  // ---------- sample data ----------
+  const JOBS = {
+    "2816": { customer: "Crescent Energy", lease: "Chapman Esse 201H/202H/203H", rig: "Cactus 140" },
+    "2840": { customer: "INEOS", lease: "JD Fenner L Pad", rig: "H&P 537" },
+    "2807": { customer: "XTO/Pioneer", lease: "Brook N18", rig: "H&P 430" },
+    "2810": { customer: "SM Energy", lease: "Ensign 103 Pad", rig: "Ensign 103" }
+  };
+
+  const OWNED_SERIALS = {
+    DMP:   ["DMP-5", "DMP-7", "DMP-13"],
+    RBFOW: ["RBFOW-11", "RBFOW-63", "RBFOW-22"],
+    FB:    ["FB-928", "FB-2402", "FB-2572"],
+    EMMP:  ["EMMP-4", "EMMP-9"]
+  };
+
+  const EQUIP_TYPES = ["DMP", "RBFOW", "FB", "EMMP", "Containment", "Other"];
+  const CONTAINMENT_TYPES = ["Single", "Double", "Triple", "Diesel", "Chemical"];
+
+  let equipCounter = 0;
+  let standbyCounter = 0;
+
+  // ---------- generic segmented control ----------
+  function wireSegmented(id, onChange){
+    const seg = document.getElementById(id);
+    seg.querySelectorAll("button:not(.soon)").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        seg.querySelectorAll("button").forEach(b=>b.classList.remove("active"));
+        btn.classList.add("active");
+        onChange(btn.dataset.val);
+        renderJson();
+      });
+    });
+  }
+
+  // ---------- job number (type-to-filter, free-form allowed) ----------
+  document.getElementById("jobNumber").addEventListener("input", (e)=>{
+    const j = JOBS[e.target.value.trim()];
+    document.getElementById("outCustomer").textContent = j ? j.customer : "—";
+    document.getElementById("outLease").textContent = j ? j.lease : "—";
+    document.getElementById("outRig").textContent = j ? j.rig : "—";
+    renderJson();
+  });
+
+  // ---------- crew source ----------
+  wireSegmented("crewSourceSeg", (val)=>{
+    document.getElementById("crewAlyWrap").classList.toggle("hidden", val !== "aly");
+    document.getElementById("crew3rdWrap").classList.toggle("hidden", val !== "3rd");
+  });
+
+  // ---------- work type ----------
+  wireSegmented("workTypeSeg", (val)=>{ /* rigup / rigdown share identical downstream fields */ });
+
+  // ---------- standby ----------
+  document.querySelectorAll('input[name="standby"]').forEach(r=>{
+    r.addEventListener("change", ()=>{
+      document.querySelectorAll('#standbySeg .pill').forEach(p=>p.classList.remove("checked"));
+      r.closest(".pill").classList.add("checked");
+      const on = r.value === "yes";
+      document.getElementById("standbyDates").classList.toggle("hidden", !on);
+      if (on && document.querySelectorAll(".standby-card").length === 0){
+        addStandbyWindow();
+      }
+      renderJson();
+    });
+  });
+
+  // generic yes/no pill wiring (charge / approved)
+  function wireYesNo(name){
+    document.querySelectorAll(`input[name="${name}"]`).forEach(r=>{
+      r.addEventListener("change", ()=>{
+        document.querySelectorAll(`input[name="${name}"]`).forEach(x=>x.closest(".pill").classList.remove("checked"));
+        r.closest(".pill").classList.add("checked");
+        renderJson();
+      });
+    });
+  }
+  wireYesNo("charge");
+  wireYesNo("approved");
+
+  // ---------- standby window repeater ----------
+  function addStandbyWindow(){
+    standbyCounter++;
+    const id = "sb" + standbyCounter;
+    const card = document.createElement("div");
+    card.className = "equip-card standby-card";
+    card.id = id;
+    card.innerHTML = `
+      <div class="equip-head">
+        <span class="tag">Standby Window #${standbyCounter}</span>
+        <button type="button" class="remove-btn">Remove ✕</button>
+      </div>
+      <div class="row2">
+        <div>
+          <label class="first">Standby Started</label>
+          <input type="datetime-local" class="standby-start">
+        </div>
+        <div>
+          <label class="first">Standby Ended</label>
+          <input type="datetime-local" class="standby-end">
+        </div>
+      </div>
+    `;
+    document.getElementById("standbyList").appendChild(card);
+    card.querySelector(".remove-btn").addEventListener("click", ()=>{
+      card.remove();
+      renderJson();
+    });
+    card.querySelectorAll("input").forEach(el=>{
+      el.addEventListener("input", renderJson);
+      el.addEventListener("change", renderJson);
+    });
+  }
+  document.getElementById("addStandbyBtn").addEventListener("click", ()=>{
+    addStandbyWindow();
+    renderJson();
+  });
+
+  // ---------- equipment repeater (uncapped) ----------
+  function addEquipmentCard(){
+    equipCounter++;
+    const id = "eq" + equipCounter;
+
+    const card = document.createElement("div");
+    card.className = "equip-card";
+    card.id = id;
+    card.innerHTML = `
+      <div class="equip-head">
+        <span class="tag">Equipment #${equipCounter}</span>
+        <button type="button" class="remove-btn">Remove ✕</button>
+      </div>
+      <label class="first">Type of Equipment</label>
+      <input type="text" class="eq-type" list="equipTypeList" placeholder="Type to search or enter a type...">
+      <div class="eq-branch"></div>
+    `;
+    document.getElementById("equipList").appendChild(card);
+
+    card.querySelector(".remove-btn").addEventListener("click", ()=>{
+      card.remove();
+      updateEquipCount();
+      renderJson();
+    });
+
+    const typeInput = card.querySelector(".eq-type");
+    function handleTypeUpdate(){
+      const raw = typeInput.value.trim();
+      const matched = EQUIP_TYPES.find(t => t.toLowerCase() === raw.toLowerCase());
+      renderEquipBranch(card, matched || (raw ? "Other" : ""));
+      renderJson();
+    }
+    typeInput.addEventListener("change", handleTypeUpdate);
+    typeInput.addEventListener("blur", handleTypeUpdate);
+
+    updateEquipCount();
+  }
+
+  function renderEquipBranch(card, type){
+    const branch = card.querySelector(".eq-branch");
+
+    if (["DMP","RBFOW","FB","EMMP"].includes(type)){
+      branch.innerHTML = `
+        <label>Ownership</label>
+        <div class="segmented own-seg">
+          <button type="button" class="active" data-val="owned">Aly Owned</button>
+          <button type="button" data-val="sub">Sub-Rented</button>
+        </div>
+        <div class="own-owned">
+          <label>Serial Number (Aly Owned — ${type})</label>
+          <input type="text" class="serial-owned" list="serialList${type}" placeholder="Type to search or enter a serial...">
+        </div>
+        <div class="own-sub hidden">
+          <label>Serial Number (Sub-Rented)</label>
+          <input type="text" class="serial-sub" placeholder="e.g. RBFOW-114">
+          <label>Vendor Name</label>
+          <input type="text" class="vendor-sub" placeholder="e.g. Byrd Rentals">
+        </div>
+      `;
+      const seg = branch.querySelector(".own-seg");
+      seg.querySelectorAll("button").forEach(btn=>{
+        btn.addEventListener("click", ()=>{
+          seg.querySelectorAll("button").forEach(b=>b.classList.remove("active"));
+          btn.classList.add("active");
+          branch.querySelector(".own-owned").classList.toggle("hidden", btn.dataset.val!=="owned");
+          branch.querySelector(".own-sub").classList.toggle("hidden", btn.dataset.val!=="sub");
+          renderJson();
+        });
+      });
+    } else if (type === "Containment"){
+      branch.innerHTML = `
+        <label>Containment Type</label>
+        <input type="text" class="cont-type" list="containmentTypeList" placeholder="Type to search or enter a type...">
+        <label>Size</label>
+        <div class="row2">
+          <input type="text" class="cont-w" placeholder="Width (e.g. 40)">
+          <input type="text" class="cont-l" placeholder="Length (e.g. 100)">
+        </div>
+      `;
+    } else if (type === "Other"){
+      branch.innerHTML = `
+        <label>Ownership</label>
+        <div class="segmented own-seg-other">
+          <button type="button" class="active" data-val="owned">Aly Owned</button>
+          <button type="button" data-val="sub">Sub-Rented</button>
+        </div>
+        <label>Equipment Description</label>
+        <input type="text" class="other-desc" placeholder="Describe the equipment...">
+        <div class="other-vendor-wrap hidden">
+          <label>Vendor Name</label>
+          <input type="text" class="other-vendor" placeholder="Vendor name...">
+        </div>
+      `;
+      const seg = branch.querySelector(".own-seg-other");
+      seg.querySelectorAll("button").forEach(btn=>{
+        btn.addEventListener("click", ()=>{
+          seg.querySelectorAll("button").forEach(b=>b.classList.remove("active"));
+          btn.classList.add("active");
+          branch.querySelector(".other-vendor-wrap").classList.toggle("hidden", btn.dataset.val!=="sub");
+          renderJson();
+        });
+      });
+    } else {
+      branch.innerHTML = "";
+    }
+
+    branch.querySelectorAll("input,select").forEach(el=>{
+      el.addEventListener("input", renderJson);
+      el.addEventListener("change", renderJson);
+    });
+  }
+
+  function updateEquipCount(){
+    const n = document.querySelectorAll(".equip-card:not(.standby-card)").length;
+    document.getElementById("equipCount").textContent = n;
+  }
+
+  document.getElementById("addEquipBtn").addEventListener("click", ()=>{
+    addEquipmentCard();
+    renderJson();
+  });
+
+  // seed with one equipment card to start
+  addEquipmentCard();
+
+  // ---------- json preview ----------
+  function collectEquipment(){
+    return Array.from(document.querySelectorAll("#equipList .equip-card")).map(card=>{
+      const type = card.querySelector(".eq-type").value;
+      const entry = { type };
+      const knownType = EQUIP_TYPES.find(t => t.toLowerCase() === type.trim().toLowerCase());
+      if (["DMP","RBFOW","FB","EMMP"].includes(knownType)){
+        const ownedActive = card.querySelector(".own-seg .active");
+        const ownership = ownedActive ? ownedActive.dataset.val : null;
+        entry.ownership = ownership === "owned" ? "Aly Owned" : ownership === "sub" ? "Sub-Rented" : null;
+        if (ownership === "owned"){
+          entry.serial = card.querySelector(".serial-owned")?.value || null;
+        } else if (ownership === "sub"){
+          entry.serial = card.querySelector(".serial-sub")?.value || null;
+          entry.vendor = card.querySelector(".vendor-sub")?.value || null;
+        }
+      } else if (knownType === "Containment"){
+        entry.containmentType = card.querySelector(".cont-type")?.value || null;
+        entry.width = card.querySelector(".cont-w")?.value || null;
+        entry.length = card.querySelector(".cont-l")?.value || null;
+      } else {
+        const ownedActive = card.querySelector(".own-seg-other .active");
+        const ownership = ownedActive ? ownedActive.dataset.val : null;
+        entry.ownership = ownership === "owned" ? "Aly Owned" : ownership === "sub" ? "Sub-Rented" : null;
+        entry.description = card.querySelector(".other-desc")?.value || null;
+        if (ownership === "sub"){
+          entry.vendor = card.querySelector(".other-vendor")?.value || null;
+        }
+      }
+      return entry;
+    });
+  }
+
+  function collectStandbyWindows(){
+    return Array.from(document.querySelectorAll(".standby-card")).map(card=>({
+      started: card.querySelector(".standby-start")?.value || null,
+      ended: card.querySelector(".standby-end")?.value || null
+    }));
+  }
+
+  function renderJson(){
+    const ticketType = document.querySelector("#ticketTypeSeg .active")?.dataset.val || null;
+    const crewSource = document.querySelector("#crewSourceSeg .active")?.dataset.val || null;
+    const workType = document.querySelector("#workTypeSeg .active")?.dataset.val || null;
+    const standbyOn = document.querySelector('input[name="standby"]:checked')?.value === "yes";
+
+    const data = {
+      ticketType,
+      jobNumber: document.getElementById("jobNumber").value || null,
+      customer: document.getElementById("outCustomer").textContent,
+      lease: document.getElementById("outLease").textContent,
+      rig: document.getElementById("outRig").textContent,
+      crew: {
+        source: crewSource === "aly" ? "Aly Employees" : "3rd Party",
+        alyEmployee: crewSource === "aly" ? (document.getElementById("crewAly").value || null) : null,
+        thirdPartyCompany: crewSource === "3rd" ? (document.getElementById("crew3rd").value || null) : null
+      },
+      workType: workType === "rigup" ? "Rig-Up" : workType === "rigdown" ? "Rig-Down" : workType,
+      equipment: collectEquipment(),
+      visit: {
+        description: document.getElementById("workDesc").value || null,
+        leftYard: document.getElementById("tLeftYard").value || null,
+        arrivedAtLocation: document.getElementById("tArriveLoc").value || null,
+        leftLocation: document.getElementById("tLeftLoc").value || null,
+        returnedToYard: document.getElementById("tReturnYard").value || null,
+        standbyWindows: standbyOn ? collectStandbyWindows() : null,
+        vehicleNumber: document.getElementById("vehicleNum").value || null,
+        mileageStart: document.getElementById("mileageStart").value || null,
+        mileageEnd: document.getElementById("mileageEnd").value || null
+      },
+      managerApproval: {
+        charge: document.querySelector('input[name="charge"]:checked')?.value === "yes",
+        notes: document.getElementById("approvalNotes").value || null,
+        approved: document.querySelector('input[name="approved"]:checked')?.value === "yes",
+        approvingManager: document.getElementById("approvingManager").value || null
+      }
+    };
+    document.getElementById("jsonOut").textContent = JSON.stringify(data, null, 2);
+  }
+
+  // wire remaining plain inputs to refresh json live
+  document.querySelectorAll("main input, main select, main textarea").forEach(el=>{
+    el.addEventListener("input", renderJson);
+    el.addEventListener("change", renderJson);
+  });
+
+  document.getElementById("btn-json").addEventListener("click", ()=>{
+    renderJson();
+    document.getElementById("json-panel").classList.add("open");
+  });
+  document.getElementById("closeJson").addEventListener("click", ()=>{
+    document.getElementById("json-panel").classList.remove("open");
+  });
+  document.getElementById("btn-submit").addEventListener("click", ()=>{
+    renderJson();
+    document.getElementById("json-panel").classList.add("open");
+    alert("Prototype only — this shows what would be submitted. No data is actually saved.");
+  });
+
+  renderJson();
+</script>
+
+</body>
+</html>
