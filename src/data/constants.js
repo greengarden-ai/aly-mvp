@@ -37,33 +37,36 @@ export const ROLE_DEFAULT_ROUTES = {
 export const TICKET_TYPES = {
   RIG_MOVE:     'RIG_MOVE',
   RENTAL:       'RENTAL',
+  TRUCKING:     'TRUCKING',
   FIELD_TICKET: 'FIELD_TICKET',
 }
 
 export const TICKET_STATUSES = {
-  DRAFT:               'DRAFT',
-  PENDING_BILLER:      'PENDING_BILLER',
-  BILLER_APPROVED:     'BILLER_APPROVED',
-  PENDING_APPROVER:    'PENDING_APPROVER',
-  APPROVER_APPROVED:   'APPROVER_APPROVED',
-  PENDING_CFO:         'PENDING_CFO',
-  CFO_APPROVED:        'CFO_APPROVED',
-  PENDING_SIGNATURE:   'PENDING_SIGNATURE',
-  SIGNED:              'SIGNED',
-  INVOICED:            'INVOICED',
+  DRAFT:                  'DRAFT',
+  PENDING_BILLER:         'PENDING_BILLER',
+  BILLER_APPROVED:        'BILLER_APPROVED',
+  PENDING_APPROVER:       'PENDING_APPROVER',
+  APPROVER_APPROVED:      'APPROVER_APPROVED',
+  PENDING_CFO:            'PENDING_CFO',
+  PENDING_ALYA_REVIEW:    'PENDING_ALYA_REVIEW',
+  CFO_APPROVED:           'CFO_APPROVED',
+  PENDING_SIGNATURE:      'PENDING_SIGNATURE',
+  SIGNED:                 'SIGNED',
+  INVOICED:               'INVOICED',
 }
 
 export const TICKET_STATUS_LABELS = {
-  DRAFT:               'Draft',
-  PENDING_BILLER:      'Pending Biller Review',
-  BILLER_APPROVED:     'Biller Approved',
-  PENDING_APPROVER:    'Pending Regional Approval',
-  APPROVER_APPROVED:   'Regionally Approved',
-  PENDING_CFO:         'Pending CFO Approval',
-  CFO_APPROVED:        'CFO Approved',
-  PENDING_SIGNATURE:   'Awaiting Signature',
-  SIGNED:              'Signed',
-  INVOICED:            'Invoiced',
+  DRAFT:                  'Draft',
+  PENDING_BILLER:         'Pending Biller Review',
+  BILLER_APPROVED:        'Biller Approved',
+  PENDING_APPROVER:       'Pending Regional Approval',
+  APPROVER_APPROVED:      'Regionally Approved',
+  PENDING_CFO:            'Pending CFO Approval',
+  PENDING_ALYA_REVIEW:    'Pending Alya Review',
+  CFO_APPROVED:           'CFO Approved',
+  PENDING_SIGNATURE:      'Awaiting Signature',
+  SIGNED:                 'Signed',
+  INVOICED:               'Invoiced',
 }
 
 export const JOB_STATUSES = {

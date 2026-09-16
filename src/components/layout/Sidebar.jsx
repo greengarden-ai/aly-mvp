@@ -25,6 +25,7 @@ const NAV_CONFIG = {
     { label: 'Exception Queue', path: '/alya/exceptions',   icon: '🚨' },
     { label: 'CFO Approval',    path: '/alya/cfo-approval', icon: '✅' },
     { label: 'Fleet & Equipment', path: '/alya/fleet',      icon: '🏗️' },
+    { label: 'Price Books Reference', path: '/alya/price-books', icon: '💰' },
     { label: 'Super Admin',     path: '/alya/admin',        icon: '⚙️' },
     { divider: true },
     { label: 'Order Intake',    path: '/cs/intake',           icon: '📋' },
@@ -54,7 +55,7 @@ export default function Sidebar({ open, onClose }) {
             background: 'rgba(0,0,0,0.4)',
             zIndex: 'calc(var(--z-sidebar) - 1)',
           }}
-          className="hide-desktop"
+          className="hide-mobile"
         />
       )}
 

@@ -1,4 +1,5 @@
 import { equipment } from '../data/equipment.js'
+import { priceBooks } from '../data/priceBooks.js'
 import {
   TICKET_STATUSES,
   JOB_STATUSES,
@@ -17,6 +18,10 @@ export const initialState = {
       WTX: ['ALYA', 'AARON', 'CUSTOMER'],
     },
   },
+
+  // ── Price Books ──────────────────────────────────────────
+  priceBooks,
+  activePriceBooks: {},  // Keyed by jobId: { [jobId]: "sm-energy#x19" }
 
   // ── Customers ────────────────────────────────────────────
   customers: [
