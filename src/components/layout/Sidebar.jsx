@@ -8,7 +8,6 @@ const NAV_CONFIG = {
   ],
   [ROLES.FIELD_WORKER]: [
     { label: 'Field Ticket',    path: '/fieldworker/field-ticket', icon: '📝' },
-    { label: 'Rig Move Ticket', path: '/fieldworker/rig-move',     icon: '🔧' },
     { label: 'Rental Ticket',   path: '/fieldworker/rental',       icon: '📅' },
   ],
   [ROLES.BILLER]: [
@@ -30,7 +29,6 @@ const NAV_CONFIG = {
     { divider: true },
     { label: 'Order Intake',    path: '/cs/intake',           icon: '📋' },
     { label: 'Field Ticket',    path: '/fieldworker/field-ticket', icon: '📝' },
-    { label: 'Rig Move Ticket', path: '/fieldworker/rig-move',     icon: '🔧' },
     { label: 'Rental Ticket',   path: '/fieldworker/rental',       icon: '📅' },
     { label: 'Ticket Assembly', path: '/biller/tickets',           icon: '📂' },
     { label: 'Approval Queue',  path: '/approver/routing',     icon: '🔄' },
