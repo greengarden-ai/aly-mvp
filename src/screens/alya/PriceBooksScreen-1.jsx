@@ -21,7 +21,7 @@ export default function PriceBooksScreen() {
       </div>
 
       <StatusBanner type="info" className="mb-4">
-        <strong>DEMO v1.1:</strong> This is a placeholder reference showing pricing structures extracted from PDFs. 
+        <strong>DEMO v1.1:</strong> This is a placeholder reference showing pricing structures extracted from PDFs.
         Full price book management and editing coming in v1.2.
       </StatusBanner>
 
